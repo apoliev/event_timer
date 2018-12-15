@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Left time counter</title>
+</head>
+<body>
+
+    <style >
+        .left-time {
+            position: absolute;
+            top: 50%;
+            transform: translate(0%, -50%);
+            width: 100%;
+        }
+
+        .left-time-value {
+            text-align: center;
+            font-size: 35px;
+        }
+
+        .left-time-value span {
+            font-weight: bold;
+        }
+
+        .left-time-form {
+            padding: 20px 30px;
+            border: 1px solid #222;
+            margin-bottom: 30px;
+        }
+
+        .left-time-form-select, .count {
+            text-align: center;
+        }
+
+        .left-time-form-select select {
+            font-size: 25px;
+            background: #fff;
+            width: 100%;
+            margin: 10px 0 20px 0;
+        }
+    </style>
+
+    <div class="left-time">
+        <div class="container">
+            <div class="left-time-form">
+                <div class="row">
+                    <div class="col-4 left-time-form-select">
+                        <label for="year-select">Year</label>
+                        <select id="year-select"></select>
+                    </div>
+
+                    <div class="col-4 left-time-form-select">
+                        <label for="month-select">Month</label>
+                        <select id="month-select"></select>
+                    </div>
+
+                    <div class="col-4 left-time-form-select">
+                        <label for="day-select">Day</label>
+                        <select id="day-select"></select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6 left-time-form-select">
+                        <label for="hour-select">Hour</label>
+                        <select id="hour-select"></select>
+                    </div>
+
+                    <div class="col-6 left-time-form-select">
+                        <label for="minute-select">Minute</label>
+                        <select id="minute-select"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3 left-time-value">
+                    <span id="days"></span> days
+                </div>
+
+                <div class="col-3 left-time-value">
+                    <span id="hours"></span> hours
+                </div>
+
+                <div class="col-3 left-time-value">
+                    <span id="minutes"></span> minutes
+                </div>
+
+                <div class="col-3 left-time-value">
+                    <span id="seconds"></span> seconds
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="event_timer.js"></script>
+
+    <script>
+        function fill_select(select, min_value, max_value) {
+            var option;
+            for(var i = min_value; i <= max_value; i++) {
+                option = document.createElement('option');
+                option.value = i;
+                option.innerHTML = i;
+                select.appendChild(option);
+            }
+        }
+
+        function clear_day_select(day_select) {
+            var options = day_select.getElementsByTagName('option');
+            while(options.length != 0) {
+                day_select.removeChild(options[0]);
+            }
+        }
+
+        function fill_day_select(day_select, year, month) {
+            var days_in_month = [
+                31, // January
+                28, // February
+                31, // March
+                30, // April
+                31, // May
+                30, // June
+                31, // July
+                31, // August
+                30, // September
+                31, // October
+                30, // November
+                31  // December
+            ];
+
+            // leap year
+            if(year % 4 == 0) {
+                days_in_month[1] = 29;
+            }
+
+            clear_day_select(day_select);
+            fill_select(day_select, 1, days_in_month[month - 1]);
+        }
+
+        var year_select = document.getElementById('year-select');
+        var month_select = document.getElementById('month-select');
+        var day_select = document.getElementById('day-select');
+        var hour_select = document.getElementById('hour-select');
+        var minute_select = document.getElementById('minute-select');
+
+        fill_select(year_select, 2000, 2100);
+        fill_select(month_select, 1, 12);
+        fill_select(day_select, 1, 31);
+        fill_select(hour_select, 0, 23);
+        fill_select(minute_select, 0, 59);
+
+        month_select.addEventListener('change', function() {
+            fill_day_select(day_select, parseInt(year_select.value), parseInt(this.value));
+        });
+
+        year_select.addEventListener('change', function() {
+            fill_day_select(day_select, parseInt(this.value), parseInt(month_select.value));
+        });
+    </script>
+
+    <script>
+        var days_box = document.getElementById('days');
+        var hours_box = document.getElementById('hours');
+        var minutes_box = document.getElementById('minutes');
+        var seconds_box = document.getElementById('seconds');
+
+        setInterval(function() {
+            year = parseInt(year_select.value);
+            month = parseInt(month_select.value);
+            day = parseInt(day_select.value);
+            hour = parseInt(hour_select.value);
+            minute = parseInt(minute_select.value);
+
+            left = left_time(year, month, day, hour, minute);
+
+            days_box.innerHTML = left['days'];
+            hours_box.innerHTML = left['hours'];
+            minutes_box.innerHTML = left['minutes'];
+            seconds_box.innerHTML = left['seconds'];
+        }, 1000);
+    </script>
+
+</body>
+</html>
