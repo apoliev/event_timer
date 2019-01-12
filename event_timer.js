@@ -1,11 +1,10 @@
-function validate_month(month) {
-    if(month > 12 || month < 1) {
-        throw 'The month is not exist';
+function validate(value, least, greatest, excp_message) {
+    if(value < least || value > greatest) {
+        throw excp_message;
     }
 }
 
-
-function validate_day(year, month, day) {
+function get_days_in_month(year, month) {
     var days_in_month = [
         31, // January
         28, // February
@@ -26,34 +25,34 @@ function validate_day(year, month, day) {
         days_in_month[1] = 29;
     }
 
-    if(day < 1 || day > days_in_month[month - 1]) {
-        throw 'The day is not exist';
-    }
+    return days_in_month[month - 1];
 }
-
-
-function validate_hour(hour) {
-    if(hour < 0 || hour > 23) {
-        throw 'The hour is not exist';
-    }
-}
-
-
-function validate_minute(minute) {
-    if(minute < 0 || minute > 59) {
-        throw 'The minute is not exist';
-    }
-}
-
 
 function validate_values(year, month, day, hour, minute) {
-    validate_month(month);
+    /*
+        define validation values:
+            validation values = [
+                value,
+                least value,
+                the greatest value,
+                exception message
+            ]
+    */
+    var validation_values = {
+        'month': [month, 1, 12, 'The month is not exist!'],
+        'day': [day, 1, get_days_in_month(year, month), 'The day is not exist!'],
+        'hour': [hour, 0, 23, 'The hour is not exist!'],
+        'minute': [minute, 0, 59, 'The minute is not exist!']
+    };
 
-    validate_day(year, month, day);
-
-    validate_hour(hour);
-
-    validate_minute(minute);
+    for (var key in validation_values) {
+        validate(
+            validation_values[key][0], // value
+            validation_values[key][1], // least
+            validation_values[key][2], // the greatest
+            validation_values[key][3]  // exception message
+        );
+    }
 }
 
 
