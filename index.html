@@ -69,8 +69,7 @@
         let left;
 
         setInterval(function() {
-            date = new Date(datetime.value)
-
+            date = new Date(datetime.value + 'T00:00:00');
             left = left_time(date);
 
             days.innerHTML = left['days'];
